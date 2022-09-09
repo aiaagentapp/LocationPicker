@@ -56,9 +56,21 @@ open class LocationPickerViewController: UIViewController {
 
 	/// default: .default
 	public var statusBarStyle: UIStatusBarStyle = .default
+    
+    public var searchTextFieldColorWrapper: Any?
 
     @available(iOS 13.0, *)
-    public lazy var searchTextFieldColor: UIColor = .clear
+    var searchTextFieldColor: UIColor {
+        get {
+            if let value = searchTextFieldColorWrapper as? UIColor {
+                return value
+            }
+            return .clear
+        }
+        set {
+            searchTextFieldColorWrapper = newValue
+        }
+    }
 	
 	public var mapType: MKMapType = .hybrid {
 		didSet {
@@ -181,12 +193,7 @@ open class LocationPickerViewController: UIViewController {
 			getCurrentLocation()
 		}
 	}
-    
-    open override func viewWillDisappear(_ animated: Bool) {
-        // Resign first responder to avoid the search bar disappearing issue
-        searchController.isActive = false
-    }
-    
+
 	open override var preferredStatusBarStyle : UIStatusBarStyle {
 		return statusBarStyle
 	}
@@ -379,7 +386,7 @@ extension LocationPickerViewController: MKMapViewDelegate {
 		if annotation is MKUserLocation { return nil }
 		
 		let pin = MKPinAnnotationView(annotation: annotation, reuseIdentifier: "annotation")
-		pin.pinTintColor = .green
+		pin.pinColor = .green
 		// drop only on long press gesture
 		let fromLongPress = annotation is MKPointAnnotation
 		pin.animatesDrop = fromLongPress
@@ -420,7 +427,7 @@ extension LocationPickerViewController: MKMapViewDelegate {
 
 extension LocationPickerViewController: UIGestureRecognizerDelegate {
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return false
+        return true
     }
 }
 
